@@ -1,24 +1,32 @@
 package com.cg.app.service;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.cg.app.feignclient.ProductAccessor;
-import com.cg.app.feignclient.modal.Product;
+import org.springframework.web.client.RestTemplate;
+
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+	
+	@Value("${productServiceURI}")
+	private String productServiceURI;
+	
 	@Autowired
-	ProductAccessor productAccessor;
+	private RestTemplate restTemplate;
 
 	
+	@SuppressWarnings("unchecked")
 	@HystrixCommand(fallbackMethod = "getBackup")
 	@Override
 	public String getProductList() {
-		List<Product> productList = productAccessor.getProductList();
-		return productList.toString();
+		
+		String products = null;
+		
+		products = restTemplate.getForObject(productServiceURI,String.class);
+		
+		return products;
 	}
 
 	public String getBackup() {

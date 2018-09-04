@@ -1,6 +1,6 @@
 package com.cg.app.service;
 
-public interface UserService {
+public interface UserService{
 
 	String getProductList();
 }
